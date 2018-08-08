@@ -1,3 +1,3 @@
-# Runescape Alt1 for linux
+# [Beta] Runescape Alt1 Toolkit unoficial linux version
 
-code in developement please wait
+in developement.
