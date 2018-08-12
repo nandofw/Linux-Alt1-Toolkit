@@ -1,3 +1,1 @@
-# [Beta] Runescape Alt1 Toolkit unoficial linux version
-
-in developement.
+# Developement of Runescape Alt1 Toolkit for Linux operating system and possible Mac system, compatible with the windows version
