@@ -1,3 +1,19 @@
+(*
+ *                      Alt1 Toolkit Linux
+ *
+ * This Source Code Form is subject to the terms of the GNU General Public License v3.0.
+ *
+ * Author:     dev.nandofw@gmail.com
+ * Repository: https://github.com/nandofw/Linux-Alt1-Toolkit
+ *
+ *
+ * Based on 'Alt1 Toolkit' by Skyllbert
+ * Site: https://runeapps.org
+ *
+ *)
+
+
+
 unit main;
 
 {$mode objfpc}{$H+}
