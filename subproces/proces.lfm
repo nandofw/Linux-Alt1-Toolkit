@@ -1,0 +1,11 @@
+object subprocess: Tsubprocess
+  Left = 999
+  Height = 59
+  Top = 175
+  Width = 112
+  Caption = 'subprocess'
+  OnCreate = FormCreate
+  OnShow = FormShow
+  LCLVersion = '1.7'
+  Visible = True
+end

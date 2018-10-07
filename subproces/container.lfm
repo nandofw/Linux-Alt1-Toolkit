@@ -1,0 +1,10 @@
+object alt1container: Talt1container
+  Left = 1079
+  Height = 43
+  Top = 141
+  Width = 124
+  Caption = 'alt1container'
+  OnShow = FormShow
+  LCLVersion = '1.7'
+  WindowState = wsMinimized
+end

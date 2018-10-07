@@ -1,0 +1,243 @@
+object mainform: Tmainform
+  Left = 76
+  Height = 429
+  Top = 181
+  Width = 320
+  ActiveControl = Panel1
+  BorderIcons = []
+  BorderStyle = bsNone
+  Caption = 'alt1app'
+  ClientHeight = 429
+  ClientWidth = 320
+  Color = 1644826
+  FormStyle = fsSystemStayOnTop
+  OnChangeBounds = FormChangeBounds
+  OnClose = FormClose
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  OnResize = FormResize
+  OnShow = FormShow
+  OnWindowStateChange = FormWindowStateChange
+  ShowInTaskBar = stNever
+  LCLVersion = '1.8.4.0'
+  Visible = True
+  object Panel1: TPanel
+    Cursor = crSizeAll
+    Left = 0
+    Height = 18
+    Top = 0
+    Width = 320
+    Align = alTop
+    AutoSize = True
+    BevelColor = 1579033
+    ClientHeight = 18
+    ClientWidth = 320
+    Color = 1644826
+    ParentColor = False
+    TabOrder = 1
+    OnMouseDown = Panel1MouseDown
+    OnMouseMove = Panel1MouseMove
+    OnMouseUp = Panel1MouseUp
+    object SpeedButton1: TSpeedButton
+      Left = 303
+      Height = 16
+      Top = 1
+      Width = 16
+      Align = alRight
+      AutoSize = True
+      Flat = True
+      Glyph.Data = {
+        E6010000424DE60100000000000036000000280000000C0000000C0000000100
+        180000000000B001000064000000640000000000000000000000655A44544A3A
+        5A4F3B544A3A544A3A544A3A5C513D5A4F3B5A4F3B5A4F3B544A3A4A4338665D
+        4E09083704044D04044D04044D04044D04065204044D04044D04044D09083754
+        4A3A7B6C5204044D050B63050B63060A6A06076A060A6A060A6A06076A050767
+        04044D5C513D6D6350040652060A6A1393EF0C4DB0060B74060B740C4DB01393
+        EF060A6A040652544A3A857655040652060A6A1551AF28ABFA1654B31654B328
+        ABFA1654B3060B7404095B61553E72665004095B060B74060D7C1E5CB63FB9FB
+        3FB9FB1E5CB6060D7C060D7C04095B6D5C4085765504095B060D7C060D7C2B64
+        B955C6FC55C6FC2B64B9070E82060D7C050B63544A3A665D4E04095B060D7C2B
+        64B968D1FE346ABB346ABB68D1FE346ABB070E82050B635C513D726650050B63
+        060D7C66C6F4346ABB071189071189346ABB66C6F4081183050B6363583F6D63
+        50050B63060D7C081183081183081183081183081183081183081183050B636D
+        5C407B6C52080C4C050B63050B63050B63060A6A060A6A060A6A050B63050B63
+        080C4C61553E726650655A44565043655A445E56455650434E49415650434E49
+        414E4941655A443C3627
+      }
+      OnClick = SpeedButton3Click
+      OnChangeBounds = SpeedButton1ChangeBounds
+    end
+    object SpeedButton2: TSpeedButton
+      Left = 287
+      Height = 16
+      Top = 1
+      Width = 16
+      Align = alRight
+      AutoSize = True
+      Flat = True
+      Glyph.Data = {
+        E6010000424DE60100000000000036000000280000000C0000000C0000000100
+        180000000000B001000064000000640000000000000000000000655A44544A3A
+        5A4F3B544A3A544A3A544A3A5C513D5A4F3B5A4F3B5A4F3B544A3A4A4338665D
+        4E09083704044D04044D04044D04044D04065204044D04044D04044D09083754
+        4A3A7B6C5204044D050B63050B63060A6A06076A060A6A060A6A06076A050767
+        04044D5C513D6D63500406520713741257BA1668C61668C51872CB1975D01668
+        C6092181040652544A3A8576550406520717781562C21970CD1970CD1667C517
+        69C81769C9081C8404095B61553E72665004095B060B74060D7C071189071189
+        071189071189060D7C060D7C04095B6D5C4085765504095B060D7C060D7C0711
+        89071189071189071189070E82060D7C050B63544A3A665D4E04095B060D7C06
+        0D7C060D7C071189071189071189071189070E82050B635C513D726650050B63
+        060D7C060D7C060D7C071189071189071189071189081183050B6363583F6D63
+        50050B63060D7C081183081183081183081183081183081183081183050B636D
+        5C407B6C52080C4C050B63050B63050B63060A6A060A6A060A6A050B63050B63
+        080C4C61553E726650655A44565043655A445E56455650434E49415650434E49
+        414E4941655A443C3627
+      }
+      OnClick = SpeedButton2Click
+    end
+    object SpeedButton3: TSpeedButton
+      Left = 271
+      Height = 16
+      Top = 1
+      Width = 16
+      Align = alRight
+      AutoSize = True
+      Flat = True
+      Glyph.Data = {
+        E6010000424DE60100000000000036000000280000000C0000000C0000000100
+        180000000000B001000064000000640000000000000000000000655A44544A3A
+        5A4F3B544A3A544A3A544A3A5C513D5A4F3B5A4F3B5A4F3B544A3A4A4338665D
+        4E09083704044D04044D04044D04044D04065204044D04044D04044D09083754
+        4A3A7B6C5204044D214F9F285FAD060B6B06076A060A6A060A6A06076A050767
+        04044D5C513D6D63500406522C65B43780C9265AAF060B74060B74060B74060B
+        74060A6A040652544A3A857655040652060C6C2A62B550BBF5204BAC07118907
+        1189060B74060B7404095B61553E72665004095B060B74060D7C2352B150BBF5
+        193BA20B1C8F0B1A85060D7C04095B6D5C4085765504095B060D7C060D7C0711
+        891D45A950BAF44EB7F250BAF41A3C9D050B63544A3A665D4E04095B060D7C07
+        11890711890C1E904AACEA3070C31632993071C3050B635C513D726650050B63
+        060D7C0711890711890C1E904EB5F016349E070E820B1887050B6363583F6D63
+        50050B63060D7C0811830811830811832251AD3880CC0C1C8A081183050B636D
+        5C407B6C52080C4C050B63050B63050B63060A6A060A6A060A6A050B63050B63
+        080C4C61553E726650655A44565043655A445E56455650434E49415650434E49
+        414E4941655A443C3627
+      }
+      OnClick = SpeedButton1Click
+      PopupMenu = PopupMenu1
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 3
+    Top = 426
+    Width = 320
+    Align = alBottom
+    BevelColor = 1579033
+    Color = 1644826
+    ParentColor = False
+    TabOrder = 2
+  end
+  object Panel3: TPanel
+    Left = 0
+    Height = 388
+    Top = 38
+    Width = 3
+    Align = alLeft
+    BevelColor = 1579033
+    Color = 1644826
+    ParentColor = False
+    TabOrder = 3
+  end
+  object Panel4: TPanel
+    Left = 317
+    Height = 388
+    Top = 38
+    Width = 3
+    Align = alRight
+    BevelColor = 1579033
+    Color = 1644826
+    ParentColor = False
+    TabOrder = 4
+  end
+  object Chromium: TChromium
+    Left = 3
+    Height = 388
+    Top = 38
+    Width = 314
+    TabStop = True
+    Align = alClient
+    TabOrder = 0
+    OnProcessMessageReceived = ChromiumProcessMessageReceived
+    OnBeforeContextMenu = ChromiumBeforeContextMenu
+    OnContextMenuCommand = ChromiumContextMenuCommand
+    OnAddressChange = ChromiumAddressChange
+    OnConsoleMessage = ChromiumConsoleMessage
+    OnJsdialog = ChromiumJsdialog
+    OnLoadEnd = ChromiumLoadEnd
+    DefaultUrl = 'http://runeapps.org/apps/alt1/'
+    Options.RemoteFonts = STATE_ENABLED
+    Options.Plugins = STATE_ENABLED
+    Options.LocalStorage = STATE_ENABLED
+    Options.Databases = STATE_ENABLED
+    Options.ApplicationCache = STATE_ENABLED
+  end
+  object Panel5: TPanel
+    Left = 0
+    Height = 20
+    Top = 18
+    Width = 320
+    Align = alTop
+    AutoSize = True
+    BevelColor = 1644826
+    Caption = 'Panel5'
+    ClientHeight = 20
+    ClientWidth = 320
+    TabOrder = 5
+    Visible = False
+    object Edit1: TEdit
+      Left = 3
+      Height = 18
+      Top = 1
+      Width = 272
+      Align = alClient
+      BorderSpacing.Left = 2
+      BorderSpacing.Right = 2
+      BorderStyle = bsNone
+      Color = clSilver
+      Font.Color = 2105406
+      Font.Height = -13
+      ParentFont = False
+      TabStop = False
+      TabOrder = 0
+      Text = 'http://'
+    end
+    object Button1: TButton
+      Left = 277
+      Height = 18
+      Top = 1
+      Width = 42
+      Align = alRight
+      AutoSize = True
+      Caption = 'Load'
+      Color = 1644826
+      Constraints.MaxHeight = 18
+      Font.Height = -13
+      ParentFont = False
+      TabOrder = 1
+    end
+  end
+  object PopupMenu1: TPopupMenu
+    Alignment = paRight
+    AutoPopup = False
+    OnPopup = PopupMenu1Popup
+    left = 32
+    top = 16
+    object MenuItem1: TMenuItem
+      Caption = 'Disable Overlay'
+      OnClick = MenuItem1Click
+    end
+    object MenuItem2: TMenuItem
+      Caption = 'Show Adressbar'
+      OnClick = MenuItem2Click
+    end
+  end
+end

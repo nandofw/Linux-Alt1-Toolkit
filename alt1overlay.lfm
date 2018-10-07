@@ -1,0 +1,37 @@
+object Overlay: TOverlay
+  Left = 74
+  Height = 115
+  Top = 182
+  Width = 148
+  Align = alClient
+  AlphaBlendValue = 0
+  BorderIcons = []
+  BorderStyle = bsNone
+  Caption = 'Overlay'
+  ClientHeight = 115
+  ClientWidth = 148
+  Color = clRed
+  FormStyle = fsSystemStayOnTop
+  OnClick = FormClick
+  OnShow = FormShow
+  ParentBiDiMode = False
+  ShowInTaskBar = stNever
+  LCLVersion = '1.8.4.0'
+  Visible = True
+  WindowState = wsMaximized
+  object Image1: TImage
+    Left = 0
+    Height = 115
+    Top = 0
+    Width = 148
+    Align = alClient
+    Enabled = False
+    Transparent = True
+  end
+  object Timer1: TTimer
+    Interval = 20
+    OnTimer = Timer1Timer
+    left = 33
+    top = 12
+  end
+end
