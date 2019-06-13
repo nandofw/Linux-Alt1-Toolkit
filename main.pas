@@ -90,7 +90,7 @@ implementation
 
 procedure Talt1app.Timer3Timer(Sender: TObject);
 var
-x,z: integer;
+x,z,ofsetx,ofsety: integer;
 str,id: string;
 StringList: TStringList;
 focus : boolean;
@@ -152,7 +152,9 @@ begin
   Process1.Active:=true;
   StringList.Clear;
   StringList.LoadFromStream(Process1.Output);
+  StringList.SaveToFile('./teste.txt');
   Process1.Active:=false;
+  // get position x y of runescape
   str:= StringList.Strings[3];
   x:= pos(':', str) ;
   str := copy(str,x+1,length(str));
@@ -161,14 +163,15 @@ begin
   x:= pos(':', str) ;
   str := copy(str,x+1,length(str));
   py := strtoint(StringReplace(str, ' ', '', [rfReplaceAll]));
-    str:= StringList.Strings[7];
+  //calculate runescape window size include offseet
+  str:= StringList.Strings[7];
   x:= pos(':', str) ;
   str := copy(str,x+1,length(str));
-  pw := strtoint(StringReplace(str, ' ', '', [rfReplaceAll]));
+  pw := strtoint(StringReplace(str, ' ', '', [rfReplaceAll]))+px;
   str:= StringList.Strings[8];
   x:= pos(':', str) ;
   str := copy(str,x+1,length(str));
-  ph := strtoint(StringReplace(str, ' ', '', [rfReplaceAll]));
+  ph := strtoint(StringReplace(str, ' ', '', [rfReplaceAll]))+py;
   m:= Mouse.CursorPos;
   if not((mx =m.x) and (my = m.y)) then
    begin

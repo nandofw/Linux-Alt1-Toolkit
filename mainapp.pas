@@ -123,12 +123,12 @@ var
  procedure Tmainform.alt1click();
  begin
  Chromium.Browser.GetMainFrame.ExecuteJavaScript('alt1onrightclick('+chr(39) +')none'+chr(39)+');','none',0);
- writeln('keypress: alt1');
+ //writeln('keypress: alt1');
  end;
 
  procedure Tmainform.alt2click();
  begin
- writeln('keypress: alt1');
+ //writeln('keypress: alt1');
  end;
 
  procedure Tmainform.Loadurl(url: string);
@@ -228,17 +228,6 @@ var
 begin
   If dialogType = JSDIALOGTYPE_ALERT then
   begin
-  SetLength(Params, 2);
-  for i := 1 to 2 do
-  Params[i-1] := ExtractWord(i , messageText,[':']);
-     if Params[0] = '1'then
-     Overlay.overLaySetGroup(Params[1])
-     else if Params[0] = '2' then
-     Overlay.overLayClearGroup(Params[1])
-     else if Params[0] = '3' then
-     Overlay.overLayLine(Params[1])
-     else if Params[0] = '4' then
-     Overlay.overLayText(Params[1]);
     callback.Cont(True, '');
     Result := True;
   end
@@ -260,48 +249,41 @@ procedure Tmainform.ChromiumProcessMessageReceived(Sender: TObject;
   const Browser: ICefBrowser; sourceProcess: TCefProcessId;
   const message: ICefProcessMessage; out Result: Boolean);
 var
-  Params: array of string;
-  i : integer;
+  arg : iceflistValue;
 begin
-  SetLength(Params, 2);
-  Params[0] := ExtractWord(1 , message.GetName,['=']);
-  Params[1] := ExtractWord(2 , message.GetName,['=']);
-     if Params[0] = '1'then
-     begin
-     Overlay.overLaySetGroup(Params[1]);
-       Result := True;
-     end
-     else
-     if Params[0] = '2' then
-     begin
-     Overlay.overLayClearGroup(Params[1]) ;
-      Result := True;
-     end
-     else if Params[0] = '3' then
-     begin
-     Overlay.overLayLine(Params[1]);
-      Result := True;
-     end
-     else if Params[0] = '4' then
-     begin
-     Overlay.overLayText(Params[1]);
-       Result := True;
-     end
-     else if Params[0] = '5' then
-     begin
-     Overlay.overLayRect(Params[1]);
-       Result := True;
-     end
-     else if Params[0] = '6' then
-     begin
-     Overlay.overLayFreezeGroup(Params[1]);
-       Result := True;
-     end
-     else if Params[0] = '7' then
-     begin
-     Overlay.overLayContinueGroup(Params[1]);
-     Result := True;
-     end;
+  arg :=  message.GetArgumentList;
+case message.name of
+    'line':
+    begin
+    Overlay.overLayLine(arg.GetInt(0),arg.GetInt(1),arg.GetInt(2),arg.GetInt(3),arg.GetInt(4),arg.GetInt(5),arg.GetInt(6));
+    Result := True;
+    end ;
+    'text':
+    begin
+    Overlay.overLayText(arg.GetString(0),arg.GetInt(1),arg.GetInt(2),arg.GetInt(3),arg.GetInt(4),arg.GetInt(5));
+    end ;
+    'rect':
+    begin
+    Overlay.overLayRect(arg.GetInt(0),arg.GetInt(1),arg.GetInt(2),arg.GetInt(3),arg.GetInt(4),arg.GetInt(5),arg.GetInt(6));
+    end;
+    'FreezeGroup':
+    begin
+    Overlay.overLayFreezeGroup(arg.GetString(0));
+    end ;
+    'ContinueGroup':
+    begin
+    Overlay.overLayContinueGroup(arg.GetString(0));
+    end;
+     'ClearGroup':
+    begin
+    Overlay.overLayClearGroup(arg.GetString(0));
+    end;
+      'SetGroup':
+    begin
+    Overlay.overLaySetGroup(arg.GetString(0));
+    end;
+   end;
+
 end;
 
 procedure Tmainform.ChromiumTakeFocus(Sender: TObject;
@@ -347,7 +329,7 @@ end;
 
 procedure Tmainform.FormWindowStateChange(Sender: TObject);
 begin
-  WriteLn(appid);
+ // WriteLn(appid);
 end;
 
 procedure Tmainform.MenuItem1Click(Sender: TObject);
@@ -386,7 +368,7 @@ begin
  mousey := Mouse.CursorPos.Y;
  formy := Top;
  formx := Left;
- WriteLn(appid);
+ //WriteLn(appid);
 end;
 
 procedure Tmainform.Panel1MouseMove(Sender: TObject; Shift: TShiftState; X,

@@ -1,7 +1,7 @@
 object mainform: Tmainform
-  Left = 76
+  Left = 614
   Height = 429
-  Top = 181
+  Top = 226
   Width = 320
   ActiveControl = Panel1
   BorderIcons = []

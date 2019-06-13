@@ -40,10 +40,10 @@ type
 
   public
   procedure overLaySetGroup(str:string);
-  procedure overLayLine(str:string) ;
+  procedure overLayLine(c,w,x1,y1,x2,y2,time:integer) ;
   procedure overLayClearGroup(str:string);
-  procedure overLayText(str:string);
-  procedure overLayRect(str:string);
+  procedure overLayText(str:string;c,s,x1,y,time:integer);
+  procedure overLayRect(c,x1,y,w,h,time,lw:integer);
   procedure overLayContinueGroup(str:string);
   procedure overLayFreezeGroup(str:string);
 
@@ -283,7 +283,7 @@ end;
 
 procedure TOverlay.FormClick(Sender: TObject);
 begin
-  WriteLn('teste')
+  //WriteLn('test')
 end;
 
 procedure TOverlay.FormPaint(Sender: TObject);
@@ -296,7 +296,7 @@ var
   x,z: integer;
   found : boolean;
 begin
-  WriteLn('set '+str)  ;
+  //WriteLn('set '+str)  ;
   found := false;
  for x := Low(datagroup) to High(datagroup) do
  if datagroup[x].name = str then
@@ -313,28 +313,23 @@ begin
  end;
 end;
 
-procedure TOverlay.overLayLine(str: string);
+procedure TOverlay.overLayLine(c,w,x1,y1,x2,y2,time:integer);
 var
-  Params: array of string;
-  i, x : integer;
+   i, x : integer;
 begin
- WriteLn(str) ;
-  //alt1.overLayLine('red', 2, 10, 10, 100, 100, 1000);
-  SetLength(Params, 7);
-  for i := 1 to 7 do
-  Params[i-1] := ExtractWord(i , str ,[',']);
+  //alt1.overLayLine(101101, 2, 10, 10, 100, 100, 1000);
   x :=  High(datagroup[activeoverlay].data)+1;
   SetLength(datagroup[activeoverlay].data,x+1);
   datagroup[activeoverlay].data[x] := Toverlaydata.Create;
-  datagroup[activeoverlay].data[x].color:= Params[0];
+  datagroup[activeoverlay].data[x].color:= inttostr(color);
   datagroup[activeoverlay].data[x].tipo:= 1;
-  datagroup[activeoverlay].data[x].width:=StrToInt(Params[1]);
+  datagroup[activeoverlay].data[x].width:=w;
   SetLength(datagroup[activeoverlay].data[x].points , 2);
-  datagroup[activeoverlay].data[x].points[0].x:=strtoint(Params[2])-Left;
-  datagroup[activeoverlay].data[x].points[0].y:=strtoint(Params[3])-top;
-  datagroup[activeoverlay].data[x].points[1].x:=strtoint(Params[4])-Left;
-  datagroup[activeoverlay].data[x].points[1].y:=strtoint(Params[5])-top;
-  datagroup[activeoverlay].data[x].time:=strtoint(Params[6]);
+  datagroup[activeoverlay].data[x].points[0].x:=x1-Left;
+  datagroup[activeoverlay].data[x].points[0].y:=y1-top;
+  datagroup[activeoverlay].data[x].points[1].x:=x2-Left;
+  datagroup[activeoverlay].data[x].points[1].y:=y2-top;
+  datagroup[activeoverlay].data[x].time:=time;
   newdata:=true;
 end;
 
@@ -362,52 +357,43 @@ end;
   //
   //clear := -1;
   //end;
-procedure TOverlay.overLayText(str:string);
+procedure TOverlay.overLayText(str:string;c,s,x1,y,time:integer);
 var
-  Params: array of string;
   i, x : integer;
 begin
 // alt1.overLayText("" + n, a1lib.mixcolor(255, 255, 255), 20, knot.reader.pos.x + x + 6, knot.reader.pos.y + y, 7000);
-  WriteLn(str);
-  SetLength(Params, 6);
-  for i := 1 to 6 do
-  Params[i-1] := ExtractWord(i , str ,[',']);
   x :=  High(datagroup[activeoverlay].data)+1;
   SetLength(datagroup[activeoverlay].data,x+1);
   datagroup[activeoverlay].data[x] := Toverlaydata.Create;
-  datagroup[activeoverlay].data[x].text:=Params[0];
-  datagroup[activeoverlay].data[x].color:= Params[1]; //text color
+  datagroup[activeoverlay].data[x].text:=str;
+  datagroup[activeoverlay].data[x].color:= inttostr(c); //text color
   datagroup[activeoverlay].data[x].tipo:= 2;  // type text
-  datagroup[activeoverlay].data[x].width:=StrToInt(Params[2]); //text size
+  datagroup[activeoverlay].data[x].width:=s; //text size
   SetLength(datagroup[activeoverlay].data[x].points , 1);
-  datagroup[activeoverlay].data[x].points[0].x:=strtoint(Params[3])-Left;
-  datagroup[activeoverlay].data[x].points[0].y:=strtoint(Params[4])-top;
-  datagroup[activeoverlay].data[x].time:=strtoint(Params[5]);
+  datagroup[activeoverlay].data[x].points[0].x:=x1-Left;
+  datagroup[activeoverlay].data[x].points[0].y:=y-top;
+  datagroup[activeoverlay].data[x].time:=time;
   newdata:=true;
 end;
 
-procedure TOverlay.overLayRect(str: string);
+procedure TOverlay.overLayRect(c,x1,y,w,h,time,lw:integer);
 var
   Params: array of string;
   i, x : integer;
 begin
   //	alt1.overLayRect('red', x, y, width, height, 2000, 1);
-  WriteLn(str);
-  SetLength(Params, 7);
-  for i := 1 to 7 do
-  Params[i-1] := ExtractWord(i , str ,[',']);
   x :=  High(datagroup[activeoverlay].data)+1;
   SetLength(datagroup[activeoverlay].data,x+1);
   datagroup[activeoverlay].data[x] := Toverlaydata.Create;
-  datagroup[activeoverlay].data[x].color:= Params[0];
-  datagroup[activeoverlay].data[x].tipo:= 3;
-  datagroup[activeoverlay].data[x].width:=StrToInt(Params[6]);
+  datagroup[activeoverlay].data[x].color:= inttostr(c);
+  datagroup[activeoverlay].data[x].tipo:= 3; //type rect
+  datagroup[activeoverlay].data[x].width:=lw;
   SetLength(datagroup[activeoverlay].data[x].points , 2);
-  datagroup[activeoverlay].data[x].points[0].x:=strtoint(Params[1])-Left;
-  datagroup[activeoverlay].data[x].points[0].y:=strtoint(Params[2])-top;
-  datagroup[activeoverlay].data[x].points[1].x:=strtoint(Params[3]); //width
-  datagroup[activeoverlay].data[x].points[1].y:=strtoint(Params[4]); //heigth
-  datagroup[activeoverlay].data[x].time:=strtoint(Params[5]);
+  datagroup[activeoverlay].data[x].points[0].x:=x1-Left;
+  datagroup[activeoverlay].data[x].points[0].y:=y-top;
+  datagroup[activeoverlay].data[x].points[1].x:=w; //width
+  datagroup[activeoverlay].data[x].points[1].y:=h; //heigth
+  datagroup[activeoverlay].data[x].time:=time;
   newdata:=true;
 end;
 

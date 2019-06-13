@@ -12,7 +12,6 @@
  *
  *)
 
-
 Unit Handler;
 
 {$MODE objfpc}{$H+}
@@ -26,7 +25,7 @@ Interface
 
 Uses
   Clipbrd, LCLType,  LCLIntf, Classes, SysUtils, Graphics,
-  cef3types, cef3intf, cef3ref, cef3own, cef3lib, Dialogs, Base64, BGRABitmap, BGRABitmapTypes, alt1;
+  cef3types, cef3intf, cef3ref, cef3own, cef3lib, Dialogs, Base64, BGRABitmap, BGRABitmapTypes, alt1,forms;
 
 Type
   { Custom handler for the render process }
@@ -65,12 +64,14 @@ Var
 function TMyHandler.Execute(const name : ustring; const obj : ICefv8Value;
   const arguments : ICefv8ValueArray; var retval : ICefv8Value;
   var exception : ustring) : Boolean;
+var
+  message : ICefProcessMessage;
 begin
 
   if not Assigned(Falt1) then
   begin
   Falt1 := Talt1.Create;
-  WriteLn('initialize alt1');
+ // WriteLn('initialize alt1');
   end;
   // return a value
   if name = 'version'  then
@@ -81,7 +82,7 @@ begin
   end
   else if name = 'identifyAppUrl'  then
   begin
-   retval := TCefv8ValueRef.NewString('tis is a test callback');
+   retval := TCefv8ValueRef.NewString('????');
   end;
   if name = 'identifyApp'  then
   begin
@@ -121,31 +122,67 @@ begin
   end
   else if name = 'overLaySetGroup'  then  //Retorna o texto contido na image
   begin
-  browser1.SendProcessMessage(PID_BROWSER,TCefProcessMessageRef.New(arguments[0].GetStringValue));
+     message := TCefProcessMessageRef.New('SetGroup');
+   message.ArgumentList.SetString(0,arguments[0].GetStringValue);
+   browser1.SendProcessMessage(PID_BROWSER,message);
   end
   else  if name = 'overLayClearGroup'  then
   begin
-   browser1.SendProcessMessage(PID_BROWSER,TCefProcessMessageRef.New(arguments[0].GetStringValue));
+  message := TCefProcessMessageRef.New('ClearGroup');
+  message.ArgumentList.SetString(0,arguments[0].GetStringValue);
+  browser1.SendProcessMessage(PID_BROWSER,message);
   end
   else  if name = 'overLayLine'  then
   begin
-   browser1.SendProcessMessage(PID_BROWSER,TCefProcessMessageRef.New(arguments[0].GetStringValue));
+   //overLayLine(a,b,c,d,e,f,g)
+   message := TCefProcessMessageRef.New('line');
+   message.ArgumentList.SetInt(0,arguments[0].GetIntValue);
+   message.ArgumentList.SetInt(1,arguments[1].GetIntValue);
+   message.ArgumentList.SetInt(2,arguments[2].GetIntValue);
+   message.ArgumentList.SetInt(3,arguments[3].GetIntValue);
+   message.ArgumentList.SetInt(4,arguments[4].GetIntValue);
+   message.ArgumentList.SetInt(5,arguments[5].GetIntValue);
+   message.ArgumentList.SetInt(6,arguments[6].GetIntValue);
+   browser1.SendProcessMessage(PID_BROWSER,message);
   end
   else  if name = 'overLayText'  then
   begin
-   browser1.SendProcessMessage(PID_BROWSER,TCefProcessMessageRef.New(arguments[0].GetStringValue));
+   //overLayText(a,b,c,d,e,f)
+   // overLayText(String str, Int32 color, Int32 size, Int32 x, Int32 y, Int32 time)
+   message := TCefProcessMessageRef.New('text');
+   message.ArgumentList.SetString(0,arguments[0].GetStringValue);
+   message.ArgumentList.SetInt(1,arguments[1].GetIntValue);
+   message.ArgumentList.SetInt(2,arguments[2].GetIntValue);
+   message.ArgumentList.SetInt(3,arguments[3].GetIntValue);
+   message.ArgumentList.SetInt(4,arguments[4].GetIntValue);
+   message.ArgumentList.SetInt(5,arguments[5].GetIntValue);
+   browser1.SendProcessMessage(PID_BROWSER,message);
   end
   else  if name = 'overLayRect'  then
   begin
-   browser1.SendProcessMessage(PID_BROWSER,TCefProcessMessageRef.New(arguments[0].GetStringValue));
+   //overLayRect(a,b,c,d,e,f,g)
+   // overLayRect(Int32 color, Int32 x, Int32 y, Int32 w, Int32 h, Int32 time, Int32 lineWidth)
+   message := TCefProcessMessageRef.New('rect');
+   message.ArgumentList.SetInt(0,arguments[0].GetIntValue);
+   message.ArgumentList.SetInt(1,arguments[1].GetIntValue);
+   message.ArgumentList.SetInt(2,arguments[2].GetIntValue);
+   message.ArgumentList.SetInt(3,arguments[3].GetIntValue);
+   message.ArgumentList.SetInt(4,arguments[4].GetIntValue);
+   message.ArgumentList.SetInt(5,arguments[5].GetIntValue);
+   message.ArgumentList.SetInt(6,arguments[6].GetIntValue);
+   browser1.SendProcessMessage(PID_BROWSER,message);
   end
   else  if name = 'overLayFreezeGroup'  then
   begin
-   browser1.SendProcessMessage(PID_BROWSER,TCefProcessMessageRef.New(arguments[0].GetStringValue));
+   message := TCefProcessMessageRef.New('FreezeGroup');
+   message.ArgumentList.SetString(0,arguments[0].GetStringValue);
+   browser1.SendProcessMessage(PID_BROWSER,message);
   end
   else  if name = 'overLayContinueGroup'  then
   begin
-   browser1.SendProcessMessage(PID_BROWSER,TCefProcessMessageRef.New(arguments[0].GetStringValue));
+   message := TCefProcessMessageRef.New('ContinueGroup');
+   message.ArgumentList.SetString(0,arguments[0].GetStringValue);
+   browser1.SendProcessMessage(PID_BROWSER,message)
   end
   else if name = 'GetbindrsX' then
   begin
@@ -178,12 +215,7 @@ Var
   myWin : ICefv8Value;
   args  : ICefv8ValueArray;
 begin
-  WriteLn('teste nao devia vir aqui');
-  myWin := context.GetGlobal;
-  mystr := 'a test323 string';
-  SetLength(args, 1);
-  args[0] := TCefv8ValueRef.NewString(mystr);
-  myWin.SetValueByKey('myval', args[0], []);
+
 end;
 
 procedure TCustomRenderProcessHandler.OnWebKitInitialized;
@@ -194,7 +226,7 @@ procedure TCustomRenderProcessHandler.OnContextReleased(
   const browser: ICefBrowser; const frame: ICefFrame;
   const context: ICefV8Context);
 begin
-  WriteLn('ContextReleased');
+
 end;
 
 procedure TCustomRenderProcessHandler.OnBrowserCreated(
@@ -202,7 +234,7 @@ procedure TCustomRenderProcessHandler.OnBrowserCreated(
 Var
   Code: ustring;
 begin
-  WriteLn('initialize render');
+ // WriteLn('initialize render');
   browser1:= browser;
   Code :=
   'var alt1;'+
@@ -211,8 +243,10 @@ begin
   '(function() {'+
   ' alt1.screenX = 0;'+
   ' alt1.screenY = 0;'+
-  ' alt1.screenWidth = 1440;'+
-  ' alt1.screenHeight = 900;'+
+  ' alt1.screenWidth = '+ inttostr(Screen.Width)+';'+
+  ' alt1.screenHeight = '+inttostr(Screen.Height)+';'+
+ // ' alt1.screenWidth = 1440;'+
+  //' alt1.screenHeight = 900;'+
   ' alt1.permissionGameState= true ;'+
   ' alt1.permissionInstalled= true ;'+
   ' alt1.permissionOverlay= true ;'+
@@ -268,7 +302,6 @@ begin
   '  };'+
   '  alt1.bindGetRegion= function bindGetRegion(handle,x1,y,x2,h) {'+
   '    native function bindGetRegion(handle,x1,y,x2,h);'+
-  //'    return bindGetRegion(handle,alt1.bindrsX + x1, alt1.bindrsY + y, x2, h);'+
   '    return bindGetRegion(handle, x1, y, x2, h);'+
   '  };'+
   '  alt1.bindReadStringEx= function bindReadStringEx(a,b,c,d) {'+
@@ -280,42 +313,46 @@ begin
   '    return bindReadColorString(handle,str,color,x,y);'+
   '  };'+
 
+
+             //overlay functions
+
   '  alt1.overLaySetGroup= function overLaySetGroup(x) {'+
   '  native function overLaySetGroup(x);'+
-  '  overLaySetGroup("1="+x);'+
+  '  overLaySetGroup(x);'+
   '  };'+
   '  alt1.overLayClearGroup= function overLayClearGroup(x) {'+
   '  native function overLayClearGroup(x);'+
-  '  overLayClearGroup("2="+ x);'+
+  '  overLayClearGroup(x);'+
   '  };'+
   '  alt1.overLayLine= function overLayLine(a,b,c,d,e,f,g) {'+
-  '  native function overLayLine(str);'+
-  '  overLayLine("3="+a+","+b+","+c+","+d+","+e+","+f+","+g);'+
+  '  native function overLayLine(a,b,c,d,e,f,g);'+
+  '  overLayLine(a,b,c,d,e,f,g);'+
   '  };'+
     '  alt1.overLayRect= function overLayRect(a,b,c,d,e,f,g) {'+
-  '  native function overLayRect(str);'+
-  '  overLayRect("5="+a+","+b+","+c+","+d+","+e+","+f+","+g);'+
+  '  native function overLayRect(a,b,c,d,e,f,g);'+
+  '  overLayRect(a,b,c,d,e,f,g);'+
   '  };'+
   '  alt1.overLayText= function overLayText(a,b,c,d,e,f) {'+
-  '  native function overLayText(str);'+
-  '  overLayText("4="+a+","+b+","+c+","+d+","+e+","+f);'+
+  '  native function overLayText(a,b,c,d,e,f);'+
+  '  overLayText(a,b,c,d,e,f);'+
   '  };'+
   '  alt1.overLayFreezeGroup= function overLayFreezeGroup(str) {'+
   '  native function overLayFreezeGroup(str);'+
-  '  overLayFreezeGroup("6=" + str);'+
+  '  overLayFreezeGroup(str);'+
   '  };'+
   '  alt1.overLayContinueGroup= function overLayContinueGroup(str) {'+
   '  native function overLayContinueGroup(str);'+
-  '  overLayContinueGroup("7="+str);'+
+  '  overLayContinueGroup(str);'+
   '  };'+
   '  alt1.addOCRFont= function addOCRFont(str1 , str2) {'+
-  '  alert(str1 + str2);'+
+  //'  alert(str1 + str2);'+    not implemented
   '  };'+
   '  alt1.overLayRefreshGroup = function overLayRefreshGroup (str) {'+
-  '  alert("refresh"+ str);'+
+  '  native function overLayRefreshGroup(str);'+
+  '  overLayRefreshGroup(str);'+
   '  };'+
   '  alt1.overLayImage = function overLayImage(x, y, z, a, s) {'+
-  '  alert(x+" , "+y+" , "+z+" , "+a+" , "+s);'+
+  //'  alert(x, y, z, a, s);'+  not implemented
   '  };'+
   '})();';
 

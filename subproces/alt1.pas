@@ -11,9 +11,7 @@
  * Site: https://runeapps.org
  *
  *)
-
-
-unit Alt1;
+  unit Alt1;
 
 {$mode objfpc}{$H+}
 
@@ -76,13 +74,13 @@ Implementation
 
 constructor Talt1.Create;
 begin
-WriteLn('create alt1');
+//WriteLn('create alt1');
 initilize();
 end;
 
 destructor Talt1.Destroy;
 begin
-WriteLn('destroy alt1');
+//WriteLn('destroy alt1');
 bmp.Free;
 free;
 end;
@@ -93,8 +91,8 @@ Ftimer := 0;
 if not Assigned(bmp) then
 //bmp := TBGRAbitmap.Create;
 ocr.addfont('clue','./clue.cvs',15,130,3,false);
-ocr.addfont('xp','./xp.cvs',15,150,4,true);
-ocr.addfont('chat','./testchat.cvs',15,160,3,false);
+ocr.addfont('xp','./xp.cvs',12,150,4,true);
+ocr.addfont('chat','./chat.cvs',12,160,3,false);
 ocr.addfontcolor('./colors.cvs');
 end;
 
@@ -235,10 +233,10 @@ if datetimetotimestamp(now).Time > Ftimer then
   y1 := y + bindrsY-10;
   w:= bindrsWidth;
   h:= 15;
-  //WriteLn(str);//debug data
+ // WriteLn(str);//debug data
   MyBit := TBGRABitmap.Create(w,h) ;
   Mybit.CanvasBGRA.CopyRect(rect(0,0,w,h),bmp, rect(x1,y1,w+x1,h+y1));
- // mybit.SaveToFile('./teste/temp'+inttostr(y)+'.bmp');
+//  mybit.SaveToFile('./teste/temp'+inttostr(y)+'.bmp');
   if (str = '{"fontname":"chat","colors":[-1]}') then
   begin
   str2 := ocr.Readline('xp',213,212,212,Mybit);

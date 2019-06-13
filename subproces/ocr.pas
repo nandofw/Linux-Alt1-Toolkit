@@ -11,10 +11,7 @@
  * Site: https://runeapps.org
  *
  *)
-
-
-
-unit Ocr;
+  unit Ocr;
 
 {$mode objfpc}{$H+}
 
