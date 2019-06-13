@@ -152,7 +152,6 @@ begin
   Process1.Active:=true;
   StringList.Clear;
   StringList.LoadFromStream(Process1.Output);
-  StringList.SaveToFile('./teste.txt');
   Process1.Active:=false;
   // get position x y of runescape
   str:= StringList.Strings[3];
