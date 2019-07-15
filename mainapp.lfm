@@ -1,7 +1,7 @@
 object mainform: Tmainform
-  Left = 614
+  Left = 164
   Height = 429
-  Top = 226
+  Top = 99
   Width = 320
   ActiveControl = Panel1
   BorderIcons = []
@@ -175,10 +175,13 @@ object mainform: Tmainform
     OnLoadEnd = ChromiumLoadEnd
     DefaultUrl = 'http://runeapps.org/apps/alt1/'
     Options.RemoteFonts = STATE_ENABLED
+    Options.Javascript = STATE_ENABLED
     Options.Plugins = STATE_ENABLED
+    Options.WebSecurity = STATE_ENABLED
     Options.LocalStorage = STATE_ENABLED
     Options.Databases = STATE_ENABLED
     Options.ApplicationCache = STATE_ENABLED
+    Options.Webgl = STATE_ENABLED
   end
   object Panel5: TPanel
     Left = 0
@@ -218,9 +221,11 @@ object mainform: Tmainform
       Align = alRight
       AutoSize = True
       Caption = 'Load'
-      Color = 1644826
+      Color = clGray
       Constraints.MaxHeight = 18
+      Font.Color = clBlack
       Font.Height = -13
+      OnClick = Button1Click
       ParentFont = False
       TabOrder = 1
     end
@@ -238,6 +243,10 @@ object mainform: Tmainform
     object MenuItem2: TMenuItem
       Caption = 'Show Adressbar'
       OnClick = MenuItem2Click
+    end
+    object MenuItem3: TMenuItem
+      Caption = 'Settings'
+      OnClick = MenuItem3Click
     end
   end
 end

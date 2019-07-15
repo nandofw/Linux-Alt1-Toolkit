@@ -182,41 +182,9 @@ object alt1app: Talt1app
     left = 160
     top = 16
   end
-  object AsyncProcess1: TAsyncProcess
-    Active = False
-    Options = []
-    Priority = ppNormal
-    StartupOptions = []
-    ShowWindow = swoNone
-    WindowColumns = 0
-    WindowHeight = 0
-    WindowLeft = 0
-    WindowRows = 0
-    WindowTop = 0
-    WindowWidth = 0
-    FillAttribute = 0
-    left = 48
-    top = 90
-  end
   object Timer3: TTimer
     OnTimer = Timer3Timer
     left = 192
     top = 16
-  end
-  object Process1: TProcess
-    Active = False
-    Options = [poWaitOnExit, poUsePipes]
-    Priority = ppNormal
-    StartupOptions = []
-    ShowWindow = swoNone
-    WindowColumns = 0
-    WindowHeight = 0
-    WindowLeft = 0
-    WindowRows = 0
-    WindowTop = 0
-    WindowWidth = 0
-    FillAttribute = 0
-    left = 192
-    top = 48
   end
 end

@@ -1,13 +1,14 @@
 program alt1linux;
 
 {$mode objfpc}{$H+}
-
+{.$DEFINE DEBUG}
 uses
+
   {$IFDEF UNIX}
   cthreads,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, runtimetypeinfocontrols, main,mainapp,simpleipc, alt1overlay;
+  Forms, runtimetypeinfocontrols, main,mainapp,simpleipc, alt1overlay, settings;
 
 var
  Client: TSimpleIPCClient;
@@ -33,6 +34,7 @@ begin
   Application.CreateForm(Talt1app, alt1app);
   Application.CreateForm(Tmainform, mainform);
   Application.CreateForm(TOverlay, Overlay);
+  Application.CreateForm(TForm1, Form1);
   Application.Run;
   end;
 end.

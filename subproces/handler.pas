@@ -41,12 +41,12 @@ Type
     procedure OnContextReleased(const browser: ICefBrowser;
       const frame: ICefFrame; const context: ICefV8Context); override;
     procedure OnBrowserCreated(const browser: ICefBrowser); override;
+    function OnProcessMessageReceived(const browser: ICefBrowser;
+      sourceProcess: TCefProcessId; const message: ICefProcessMessage): Boolean; override;
   end;
 
   TMyHandler = class(TCefv8HandlerOwn)
   protected
-  Falt1: Talt1;
-
   function Execute(const name: ustring; const obj: ICefv8Value;
     const arguments: ICefv8ValueArray; var retval: ICefv8Value;
     var exception: ustring): Boolean; override;
@@ -58,7 +58,7 @@ Implementation
 Var
   mystr : String;
   browser1: ICefBrowser;
-
+  Falt1: Talt1;
 { TMyHandler }
 
 function TMyHandler.Execute(const name : ustring; const obj : ICefv8Value;
@@ -68,11 +68,6 @@ var
   message : ICefProcessMessage;
 begin
 
-  if not Assigned(Falt1) then
-  begin
-  Falt1 := Talt1.Create;
- // WriteLn('initialize alt1');
-  end;
   // return a value
   if name = 'version'  then
   retval := TCefv8ValueRef.NewString('1.0.0');
@@ -135,13 +130,14 @@ begin
   else  if name = 'overLayLine'  then
   begin
    //overLayLine(a,b,c,d,e,f,g)
+  //Boolean overLayLine(Int32 color, Int32 width, Int32 x1, Int32 y1, Int32 x2, Int32 y2, Int32 time)
    message := TCefProcessMessageRef.New('line');
    message.ArgumentList.SetInt(0,arguments[0].GetIntValue);
    message.ArgumentList.SetInt(1,arguments[1].GetIntValue);
-   message.ArgumentList.SetInt(2,arguments[2].GetIntValue);
-   message.ArgumentList.SetInt(3,arguments[3].GetIntValue);
-   message.ArgumentList.SetInt(4,arguments[4].GetIntValue);
-   message.ArgumentList.SetInt(5,arguments[5].GetIntValue);
+   message.ArgumentList.SetInt(2,arguments[2].GetIntValue + Falt1.rsx);
+   message.ArgumentList.SetInt(3,arguments[3].GetIntValue + Falt1.rsy);
+   message.ArgumentList.SetInt(4,arguments[4].GetIntValue + Falt1.rsx);
+   message.ArgumentList.SetInt(5,arguments[5].GetIntValue + Falt1.rsy);
    message.ArgumentList.SetInt(6,arguments[6].GetIntValue);
    browser1.SendProcessMessage(PID_BROWSER,message);
   end
@@ -153,8 +149,8 @@ begin
    message.ArgumentList.SetString(0,arguments[0].GetStringValue);
    message.ArgumentList.SetInt(1,arguments[1].GetIntValue);
    message.ArgumentList.SetInt(2,arguments[2].GetIntValue);
-   message.ArgumentList.SetInt(3,arguments[3].GetIntValue);
-   message.ArgumentList.SetInt(4,arguments[4].GetIntValue);
+   message.ArgumentList.SetInt(3,arguments[3].GetIntValue + Falt1.rsx);
+   message.ArgumentList.SetInt(4,arguments[4].GetIntValue + Falt1.rsy);
    message.ArgumentList.SetInt(5,arguments[5].GetIntValue);
    browser1.SendProcessMessage(PID_BROWSER,message);
   end
@@ -164,8 +160,8 @@ begin
    // overLayRect(Int32 color, Int32 x, Int32 y, Int32 w, Int32 h, Int32 time, Int32 lineWidth)
    message := TCefProcessMessageRef.New('rect');
    message.ArgumentList.SetInt(0,arguments[0].GetIntValue);
-   message.ArgumentList.SetInt(1,arguments[1].GetIntValue);
-   message.ArgumentList.SetInt(2,arguments[2].GetIntValue);
+   message.ArgumentList.SetInt(1,arguments[1].GetIntValue + Falt1.rsx);
+   message.ArgumentList.SetInt(2,arguments[2].GetIntValue + Falt1.rsy);
    message.ArgumentList.SetInt(3,arguments[3].GetIntValue);
    message.ArgumentList.SetInt(4,arguments[4].GetIntValue);
    message.ArgumentList.SetInt(5,arguments[5].GetIntValue);
@@ -181,6 +177,12 @@ begin
   else  if name = 'overLayContinueGroup'  then
   begin
    message := TCefProcessMessageRef.New('ContinueGroup');
+   message.ArgumentList.SetString(0,arguments[0].GetStringValue);
+   browser1.SendProcessMessage(PID_BROWSER,message)
+  end
+    else  if name = 'overLayRefreshGroup'  then
+  begin
+   message := TCefProcessMessageRef.New('RefreshGroup');
    message.ArgumentList.SetString(0,arguments[0].GetStringValue);
    browser1.SendProcessMessage(PID_BROWSER,message)
   end
@@ -201,11 +203,43 @@ begin
   begin
   falt1.bindrsHeight := arguments[0].GetIntValue;
   retval := TCefv8ValueRef.NewBool(true);
+  end
+  else if name = 'getrsWidth' then
+  begin
+  retval := TCefv8ValueRef.NewInt(Falt1.rsWidth);
+  end
+  else if name = 'getrsHeight' then
+  begin
+  retval := TCefv8ValueRef.NewInt(Falt1.rsHeight);
   end;
+
 
   //ShowMessage('teste alt1:' + name);
   Result := True;
 end;
+
+
+function  TCustomRenderProcessHandler.OnProcessMessageReceived(const browser: ICefBrowser;
+  sourceProcess: TCefProcessId; const message: ICefProcessMessage): Boolean;
+var
+  arg : iceflistValue;
+begin
+  arg :=  message.GetArgumentList;
+      case message.name of
+    'settings':
+      begin
+        falt1.connectimg(arg.GetInt(0),arg.GetInt(1),arg.GetInt(2),arg.GetInt(3),arg.GetInt(4),arg.GetInt(5));
+        Result := True;
+      end ;
+        'newsettings':
+      begin
+        falt1.reconnectimg(arg.GetInt(0),arg.GetInt(1),arg.GetInt(2),arg.GetInt(3),arg.GetInt(4),arg.GetInt(5));
+        Result := True;
+      end ;
+    end;
+ end;
+
+
 
 { TCustomRenderProcessHandler }
 
@@ -233,13 +267,24 @@ procedure TCustomRenderProcessHandler.OnBrowserCreated(
   const browser: ICefBrowser);
 Var
   Code: ustring;
+  message : ICefProcessMessage;
 begin
  // WriteLn('initialize render');
   browser1:= browser;
+  if not Assigned(Falt1) then
+  begin
+  Falt1 := Talt1.Create;
+  end;
   Code :=
   'var alt1;'+
   'if (!alt1)'+
-  '  alt1 = {};'+
+  ' alt1 = {'+
+  ' get rsWidth(){ '+
+  ' native function getrsWidth();'+
+  ' return getrsWidth();},'+
+  ' get rsHeight(){ '+
+  ' native function getrsHeight();'+
+  ' return getrsHeight();}};'+
   '(function() {'+
   ' alt1.screenX = 0;'+
   ' alt1.screenY = 0;'+
@@ -260,8 +305,8 @@ begin
   ' alt1.rsScaling= 1  ;'+
   ' alt1.rsX= 0 ;'+
   ' alt1.rsY= 0 ;'+
-  ' alt1.rsWidth= 1440 ;'+
-  ' alt1.rsHeight=900;'+
+
+  //' alt1.rsHeight=900;'+
   //' alt1.bindrsX = {}; (function(){'+
   //' alt1.bindrsX.__defineGetter__(''bind_rsX'',function(){native function GetbindrsX();return GetbindrsX();});'+
   //' alt1.bindrsX.__defineSetter__(''bind_rsX'',function(b){native function SetbindrsX();if(b) SetbindrsX(b);});'+
@@ -355,8 +400,11 @@ begin
   //'  alert(x, y, z, a, s);'+  not implemented
   '  };'+
   '})();';
+   CefRegisterExtension('example/v8', Code, TMyHandler.Create as ICefv8Handler);
 
-  CefRegisterExtension('example/v8', Code, TMyHandler.Create as ICefv8Handler);
+   message := TCefProcessMessageRef.New('connect');
+   browser1.SendProcessMessage(PID_BROWSER,message);
+
 
 end;
 

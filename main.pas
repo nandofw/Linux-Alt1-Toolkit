@@ -23,17 +23,21 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   Menus, StdCtrls, fpjson, jsonparser, fpjsonrtti, simpleipc, process, StrUtils,
-  lcltype, AsyncProcess, xlib, mainapp;
+  lcltype, AsyncProcess, mainapp,settings,x;
 
 type
 
   { Talt1app }
 
+  Papp = ^Tapp;
+  Tapp = record
+    Id : integer;
+    frm: Tmainform;
+  end;
+
   Talt1app = class(TForm)
     Alt1: TTrayIcon;
-    AsyncProcess1: TAsyncProcess;
     Memo1: TMemo;
-    Process1: TProcess;
     SimpleIPCServer1: TSimpleIPCServer;
     Timer1: TTimer;
     Timer2: TTimer;
@@ -49,12 +53,14 @@ type
     procedure Timer1Timer(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);
     function Findapps(str: string):integer;
+    function Findapps(id : integer):Papp;
     procedure Timer3Timer(Sender: TObject);
   private
 
   public
 
   end;
+
     Tcustomapphanler = record
     url , appname , showurl: string;
     minWidth , minHeight , maxWidth , maxHeight, defaultWidth , defaultHeight, postop , posleft: integer;
@@ -68,6 +74,7 @@ var
   activeapp,lastactive: integer;
   px,py,pw,ph,mx,my:integer;
   isrun: boolean;
+  appid:integer;
 implementation
 
 {$R *.lfm}
@@ -88,111 +95,44 @@ implementation
   end;
   end;
 
+ function Talt1app.Findapps(id : integer):Papp;
+   var
+  i: Integer;
+  ap : Papp;
+  begin
+  Result := nil;
+  for i := 0 to form1.ListBox2.Count do
+  begin
+    ap := Papp(form1.ListBox2.Items.Objects[i]);
+      begin
+        if ap^.Id = id then
+          begin
+            Result := ap;
+            Exit;
+          end;
+      end;
+  end;
+  end;
+
+
 procedure Talt1app.Timer3Timer(Sender: TObject);
 var
-x,z,ofsetx,ofsety: integer;
-str,id: string;
-StringList: TStringList;
-focus : boolean;
 m:tpoint;
+activewin: TWindow;
+i: Integer;
+ap : Papp;
 begin
-  lastactive := lastactive + 1000;
-  focus := false;
-  StringList := TStringList.Create;
-                                 //check if RuneScape is running
-  Process1.Executable:= 'xwininfo';
-  Process1.Parameters.Clear;
-  Process1.Parameters.Add('-name');
-  Process1.Parameters.Add('RuneScape');
-  Process1.Active:=true;
-  StringList.LoadFromStream(Process1.Output);
-  Process1.Active:=false;
- // str:= StringList.Strings[0];
-  x := StringList.Count;//pos('error', str);
-  if x <> 0 then
-  begin
-  isrun:=true;                                           //Get the active window id
-  Process1.Executable:='xprop';
-  Process1.Parameters.Clear;
-  Process1.Parameters.Add('-root');
-  Process1.Parameters.Add('32x');
-  Process1.Parameters.Add(char(39)+'\t$0'+char(39));
-  Process1.Parameters.Add('_NET_ACTIVE_WINDOW');
-  Process1.Active:=true;
-  Process1.Parameters.Clear;
-  StringList.LoadFromStream(Process1.Output);
-  Process1.Active:=false;
-  str:= StringList.Strings[0];
-  //_NET_ACTIVE_WINDOW(WINDOW)'	0x4c00066'
-  x:= pos('0x', str) ;
-  id := copy(str,x,length(str)-x);
-                                             //Get the active window Name
-  Process1.Executable:='xprop';
-  Process1.Parameters.Clear;
-  Process1.Parameters.Add('-id');
-  Process1.Parameters.Add(id);
-  Process1.Parameters.Add('_NET_WM_NAME');
-  Process1.Active:=true;
-  StringList.Clear;
-  StringList.LoadFromStream(Process1.Output);
-  Process1.Active:=false;
-  str:= StringList.Strings[0];
-  x:= pos('"', str) ;
-  str := copy(str,x+1,length(str)-x-1);
-  if str = 'RuneScape' then  //Runescape is active
-   begin
- // Absolute upper-left X:  41  3
-//  Absolute upper-left Y:  24   4
- // Width: 1399              7
- // Height: 876              8
-  Process1.Executable:= 'xwininfo';
-  Process1.Parameters.Clear;
-  Process1.Parameters.Add('-id');
-  Process1.Parameters.Add(id);
-  Process1.Active:=true;
-  StringList.Clear;
-  StringList.LoadFromStream(Process1.Output);
-  StringList.SaveToFile('./teste.txt');
-  Process1.Active:=false;
-  // get position x y of runescape
-  str:= StringList.Strings[3];
-  x:= pos(':', str) ;
-  str := copy(str,x+1,length(str));
-  px := strtoint(StringReplace(str, ' ', '', [rfReplaceAll]));
-  str:= StringList.Strings[4];
-  x:= pos(':', str) ;
-  str := copy(str,x+1,length(str));
-  py := strtoint(StringReplace(str, ' ', '', [rfReplaceAll]));
-  //calculate runescape window size include offseet
-  str:= StringList.Strings[7];
-  x:= pos(':', str) ;
-  str := copy(str,x+1,length(str));
-  pw := strtoint(StringReplace(str, ' ', '', [rfReplaceAll]))+px;
-  str:= StringList.Strings[8];
-  x:= pos(':', str) ;
-  str := copy(str,x+1,length(str));
-  ph := strtoint(StringReplace(str, ' ', '', [rfReplaceAll]))+py;
-  m:= Mouse.CursorPos;
-  if not((mx =m.x) and (my = m.y)) then
-   begin
-  lastactive := 0;
-  mx:=m.x;
-  my:=m.y;
-   end;
-  focus:= true;
-  end;
-  end
+  if Form1.ListBox1.Count > 0 then  //runescape is running
+  isrun:=True
   else
+  isrun:= False;
+  activewin:= Form1.getfocuswindow();
+  m:= Mouse.CursorPos;
+  for i := 0 to form1.ListBox2.Count-1 do
   begin
-  isrun:=false;
+    ap := Papp(form1.ListBox2.Items.Objects[i]);
+    ap^.frm.runescapeinfo(isrun,activewin,m.x,m.y);
   end;
-   x:= Length(apps);
-  for z:= 0 to x-1 do
-  begin
-  if Assigned(apps[z].form) then
-   apps[z].form.runescapeinfo(isrun,focus,lastactive,px,py,pw,ph);
-  end;
-  StringList.Free;
 end;
 
   function saveapp():boolean;
@@ -234,13 +174,20 @@ procedure Talt1app.mainmenuclick(Sender: TObject);
 var
   id : string ;
   x :integer;
+  ap : Papp;
 begin
 
   id := (Sender as TmenuItem).Caption;
   if id = 'Close Alt1' then
   begin
   saveapp();
+  Form1.FormClose2();
   alt1app.close ;
+  end
+  else
+  if id = 'Settings' then
+  begin
+  Form1.Show;
   end
   else
   begin
@@ -249,16 +196,22 @@ begin
    begin
        if not Assigned(apps[x].form) then
        begin
-       apps[x].form :=  TMainform.Create(nil);
-       apps[x].form.Setappid(x);
-       apps[x].form.Top:=apps[x].postop;
-       apps[x].form.Left:=apps[x].posleft;
-       apps[x].form.Height:=apps[x].defaultHeight;
-       apps[x].form.Width:=apps[x].defaultWidth;
-       apps[x].form.Caption:=apps[x].appname;
+       new(ap);
+       inc(appid);
+       ap^.Id:=appid;
+       ap^.frm := TMainform.Create(nil);
+      // apps[x].form :=  TMainform.Create(nil);
+       ap^.frm.setrswindow(form1.getrsid());
+       ap^.frm.Setappid(appid); //unique value
+       ap^.frm.Top:=apps[x].postop;
+       ap^.frm.Left:=apps[x].posleft;
+       ap^.frm.Height:=apps[x].defaultHeight;
+       ap^.frm.Width:=apps[x].defaultWidth;
+       ap^.frm.Caption:=apps[x].appname;
        sleep(50);
-       apps[x].form.Loadurl(apps[x].url);
+       ap^.frm.Loadurl(apps[x].url);
        activeapp:= x;
+       Form1.ListBox2.AddItem(apps[x].appname,TObject(ap));
        end
        else
        begin
@@ -279,6 +232,7 @@ end;
 procedure Talt1app.FormCreate(Sender: TObject);
 begin
   activeapp := -1;
+  appid:=100;
   lastactive := 0;
   px:= 0;
   py:= 0;
@@ -355,6 +309,10 @@ begin
   mainmenu.Items.Add(Newitem);
   end;
   NewItem := TMenuItem.Create(Self);
+  NewItem.Caption := 'Settings';
+  NewItem.OnClick := @mainmenuclick;
+  mainmenu.Items.Add(Newitem);
+  NewItem := TMenuItem.Create(Self);
   NewItem.Caption := 'Close Alt1';
   NewItem.OnClick := @mainmenuclick;
   mainmenu.Items.Add(Newitem);
@@ -375,8 +333,8 @@ end;
 procedure Talt1app.SimpleIPCServer1Message(Sender: TObject);
 var
   ParamsArray: array of String;
-  str,str2,Params : string;
-  x ,z: integer;
+  Params : string;
+  x : integer;
    Count, i: Integer;
 begin
   count := SimpleIPCServer1.MsgType;
@@ -426,9 +384,6 @@ begin
 end;
 
 procedure Talt1app.Timer2Timer(Sender: TObject);
-var
-  x:integer;
-  str: string;
 begin
    SimpleIPCServer1.PeekMessage(1,true);
 end;

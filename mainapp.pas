@@ -20,9 +20,9 @@ Unit mainapp;
 Interface
 
 Uses
-  Classes, SysUtils, simpleipc, FileUtil, Forms, Controls, Graphics, Dialogs,
+  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
   StdCtrls, LCLType, ExtCtrls, Menus, Buttons, cef3types, cef3lib, cef3intf,
-  cef3lcl, cef3context, cef3gui, LazUTF8, LazFileUtils, RTTICtrls, strutils; // custom render process handler
+  cef3lcl, cef3ref, LazUTF8, LazFileUtils, RTTICtrls, BGRABitmap,settings,x; // custom render process handler
 
 Type
 
@@ -34,6 +34,7 @@ Type
     Edit1: TEdit;
     MenuItem1: TMenuItem;
     MenuItem2: TMenuItem;
+    MenuItem3: TMenuItem;
     Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;
@@ -43,6 +44,7 @@ Type
     SpeedButton1: TSpeedButton;
     SpeedButton2: TSpeedButton;
     SpeedButton3: TSpeedButton;
+    procedure Button1Click(Sender: TObject);
     procedure ChromiumAddressChange(Sender: TObject;
       const Browser: ICefBrowser; const Frame: ICefFrame; const url: ustring);
     procedure ChromiumBeforeContextMenu(Sender: TObject;
@@ -75,6 +77,7 @@ Type
     procedure FormWindowStateChange(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
+    procedure MenuItem3Click(Sender: TObject);
     procedure Panel1MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure Panel1MouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer
@@ -86,12 +89,13 @@ Type
     procedure SpeedButton1Click(Sender: TObject);
     procedure SpeedButton2Click(Sender: TObject);
     procedure SpeedButton3Click(Sender: TObject);
-    procedure Timer1Timer(Sender: TObject);
     procedure Setappid(id:integer);
     procedure alt1click();
     procedure alt2click();
     procedure Loadurl(url:string);
-    procedure runescapeinfo(isrun,focus:boolean;lastactive,px,py,pw,ph:integer);
+    procedure runescapeinfo(isrun:boolean;activewin:twindow;px,py:integer);
+    procedure setrswindow(rsw:twindow);
+    procedure changerswindow(rsw:twindow);
   private
     { private declarations }
     mousex,mousey, formx, formy, sl,sh,sw,appid: integer;
@@ -104,7 +108,9 @@ Type
 
 Var
   mainform : Tmainform;
-
+  lastactive : integer;
+  rswin : twindow;
+  rsinfo: Trsinfo;
 Implementation
 Uses main,alt1overlay;
 
@@ -117,7 +123,7 @@ var
  procedure Tmainform.Setappid(id:integer);
  begin
   appid:=id;
-  writeln(appid);
+  //writeln(appid);
  end;
 
  procedure Tmainform.alt1click();
@@ -137,26 +143,75 @@ var
    Chromium.Load(url);
  end;
 
-  procedure Tmainform.runescapeinfo(isrun, focus: boolean; lastactive, px, py,
-   pw, ph: integer);
+  procedure Tmainform.runescapeinfo(isrun:boolean;activewin:twindow;px,py:integer);
  var
    str: string;
+   msg : ICefProcessMessage;
+   info : Trsinfo;
  begin
    if aceptdata then
    begin
-   str:= 'alt1.rsX = '+inttostr(px)+';alt1.rsY = '+inttostr(py)+';alt1.rsWidth = '+inttostr(pw)+'; alt1.rsHeight = '+inttostr(ph)+';';
-     if focus then
-     str := str +'alt1.rsActive = true;'
+   str:= '';
+     if rswin = activewin then
+     begin
+     lastactive := 0;
+     str := str +'alt1.rsActive = true;';
+     end
      else
+     begin
      str := str +'alt1.rsActive = false;';
-     if isrun then
+     inc(lastactive, 1000);
+     end;
+     if rswin <> 0 then
      str := str +'alt1.rsLinked = true;'
      else
      str := str +'alt1.rsLinked = false;';
      str := str +'alt1.rsLastActive = '+ inttostr(lastactive)+';';
      Chromium.Browser.GetMainFrame.ExecuteJavaScript(str,'none',0);
    end;
+   info := form1.getrsinfo(rswin);
+   if ((not(info.key = rsinfo.key) or not(info.x = rsinfo.x) or not(info.y = rsinfo.y)) and (info.key <> 0)) then //if rs has moved or resized send new settings
+   begin
+    msg := TCefProcessMessageRef.New('newsettings');
+    msg.ArgumentList.Setint(0,rswin);
+    msg.ArgumentList.Setint(1,info.key);
+    msg.ArgumentList.Setint(2,info.w);
+    msg.ArgumentList.Setint(3,info.h);
+    msg.ArgumentList.Setint(4,info.x);
+    msg.ArgumentList.Setint(5,info.y);
+    Chromium.Browser.SendProcessMessage( PID_RENDERER ,msg); //send new capture settings
+    rsinfo := info;
+   end;
  end;
+
+  procedure Tmainform.setrswindow(rsw: twindow);
+  begin
+    rswin:=rsw;
+    Form1.inccount(rsw);
+  end;
+
+  procedure Tmainform.changerswindow(rsw: twindow);
+  var
+      msg : ICefProcessMessage;
+      info :Trsinfo;
+  begin
+    if not(rswin = rsw) then //windos capture changed tell render process
+    begin
+    info:= form1.getrsinfo(rsw);
+    msg := TCefProcessMessageRef.New('newsettings');
+    msg.ArgumentList.Setint(0,rsw);
+    msg.ArgumentList.Setint(1,info.key);
+    msg.ArgumentList.Setint(2,info.w);
+    msg.ArgumentList.Setint(3,info.h);
+    msg.ArgumentList.Setint(4,info.x);
+    msg.ArgumentList.Setint(5,info.y);
+    form1.deccount(rswin);
+    Form1.inccount(rsw);
+    Chromium.Browser.SendProcessMessage( PID_RENDERER ,msg); //send new capture settings
+    rswin:=rsw;
+    rsinfo := info;
+    end;
+  end;
 
 procedure Tmainform.ChromiumBeforeContextMenu(Sender: TObject;
   const Browser: ICefBrowser; const Frame: ICefFrame;
@@ -172,6 +227,11 @@ begin
   edit1.Text:=url;
 end;
 
+procedure Tmainform.Button1Click(Sender: TObject);
+begin
+  Chromium.Load(edit1.Text);
+end;
+
 procedure Tmainform.ChromiumConsoleMessage(Sender: TObject;
   const Browser: ICefBrowser; const message, Source: ustring; line: Integer;
   out Result: Boolean);
@@ -185,11 +245,9 @@ procedure Tmainform.ChromiumContextMenuCommand(Sender: TObject;
   const params: ICefContextMenuParams; commandId: Integer;
   eventFlags: TCefEventFlags; out Result: Boolean);
 var
-mousePoint: TCefPoint;
 mouse: pCefPoint;
 client: ICefClient;
 setting: TCefBrowserSettings;
- inspectElementAt: PCefPoint;
  Info: TCefWindowInfo;
 
 begin
@@ -222,9 +280,6 @@ procedure Tmainform.ChromiumJsdialog(Sender: TObject; const Browser: ICefBrowser
   const originUrl: ustring; dialogType: TCefJsDialogType;
   const messageText, defaultPromptText: ustring; callback: ICefJsDialogCallback;
   out suppressMessage: Boolean; out Result: Boolean);
-var
-  Params: array of string;
-  i : integer;
 begin
   If dialogType = JSDIALOGTYPE_ALERT then
   begin
@@ -250,6 +305,9 @@ procedure Tmainform.ChromiumProcessMessageReceived(Sender: TObject;
   const message: ICefProcessMessage; out Result: Boolean);
 var
   arg : iceflistValue;
+  msg : ICefProcessMessage;
+  x:integer;
+  info : Trsinfo;
 begin
   arg :=  message.GetArgumentList;
 case message.name of
@@ -261,26 +319,52 @@ case message.name of
     'text':
     begin
     Overlay.overLayText(arg.GetString(0),arg.GetInt(1),arg.GetInt(2),arg.GetInt(3),arg.GetInt(4),arg.GetInt(5));
+    Result := True;
     end ;
     'rect':
     begin
     Overlay.overLayRect(arg.GetInt(0),arg.GetInt(1),arg.GetInt(2),arg.GetInt(3),arg.GetInt(4),arg.GetInt(5),arg.GetInt(6));
+    Result := True;
     end;
     'FreezeGroup':
     begin
     Overlay.overLayFreezeGroup(arg.GetString(0));
+    Result := True;
     end ;
     'ContinueGroup':
     begin
     Overlay.overLayContinueGroup(arg.GetString(0));
+    Result := True;
     end;
      'ClearGroup':
     begin
     Overlay.overLayClearGroup(arg.GetString(0));
+    Result := True;
     end;
       'SetGroup':
     begin
     Overlay.overLaySetGroup(arg.GetString(0));
+    Result := True;
+    end;
+    'RefreshGroup':
+    begin
+    Overlay.overLayRefreshGroup(arg.GetString(0));
+    Result := True;
+    end;
+      'connect':
+    begin
+    msg := TCefProcessMessageRef.New('settings');
+    info:= form1.getrsinfo(rswin);
+    msg.ArgumentList.Setint(0,rswin);
+    msg.ArgumentList.Setint(1,info.key);
+    msg.ArgumentList.Setint(2,info.w);
+    msg.ArgumentList.Setint(3,info.h);
+    msg.ArgumentList.Setint(4,info.x);
+    msg.ArgumentList.Setint(5,info.y);
+    Form1.inccount(rswin);
+    rsinfo := info;
+    Browser.SendProcessMessage( PID_RENDERER ,msg);
+    Result := True;
     end;
    end;
 
@@ -315,6 +399,7 @@ begin
   appid :=-1;
   minimised:= false;
   aceptdata:= false;
+
 end;
 
 procedure Tmainform.FormResize(Sender: TObject);
@@ -358,6 +443,11 @@ begin
   Panel5.Visible:= true;
   MenuItem2.Caption:= 'Hide Adressbar';
   end
+end;
+
+procedure Tmainform.MenuItem3Click(Sender: TObject);
+begin
+ form1.show;
 end;
 
 procedure Tmainform.Panel1MouseDown(Sender: TObject; Button: TMouseButton;
@@ -427,17 +517,18 @@ begin
 end;
 
 procedure Tmainform.SpeedButton3Click(Sender: TObject);
+var
+  ap :Papp;
 begin
 if not (appid = -1) then
  begin
- apps[appid].posleft:= left;
- apps[appid].postop:= top;
- apps[appid].defaultHeight:= Height;
- apps[appid].defaultWidth:= Width;
- apps[appid].form:= nil;
- if activeapp = appid then
+  form1.deccount(rswin);
+  ap:=alt1app.Findapps(appid);
+  Form1.ListBox2.Items.Delete(Form1.ListBox2.Items.IndexOfObject(TObject(ap)));
+   if activeapp = appid then
  activeapp:= -1;
- Free;
+  ap^.frm.Free;
+  Dispose(ap);
  end
  else
  begin
@@ -445,17 +536,12 @@ if not (appid = -1) then
  end;
 end;
 
-procedure Tmainform.Timer1Timer(Sender: TObject);
-begin
-
-end;
-
  Initialization
   Path := GetCurrentDirUTF8 + PathDelim;
   CefResourcesDirPath := Path ;
   CefLocalesDirPath := Path + 'locales';
   CefCachePath:= Path + 'cache';
-  CefBrowserSubprocessPath := Path + 'subproces'{$IFDEF WINDOWS}+'.exe'{$ENDIF};
+  CefBrowserSubprocessPath := Path + 'subproces';
   CefInitialize;
 
 end.

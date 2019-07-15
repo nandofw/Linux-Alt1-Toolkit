@@ -1,0 +1,252 @@
+object Form1: TForm1
+  Left = 53
+  Height = 342
+  Top = 39
+  Width = 485
+  Caption = 'Alt1 Settings'
+  ClientHeight = 342
+  ClientWidth = 485
+  OnClose = FormClose
+  OnCreate = FormCreate
+  OnShow = FormShow
+  LCLVersion = '1.8.4.0'
+  object PageControl1: TPageControl
+    Left = 0
+    Height = 342
+    Top = 0
+    Width = 485
+    ActivePage = TabSheet1
+    Align = alClient
+    TabIndex = 0
+    TabOrder = 0
+    object TabSheet1: TTabSheet
+      Caption = 'Capture '
+      ClientHeight = 311
+      ClientWidth = 481
+      object Panel1: TPanel
+        Left = 8
+        Height = 96
+        Top = 16
+        Width = 168
+        BevelColor = clBlack
+        BorderStyle = bsSingle
+        ClientHeight = 94
+        ClientWidth = 166
+        TabOrder = 0
+        object CheckListBox1: TCheckListBox
+          Left = 8
+          Height = 64
+          Top = 24
+          Width = 152
+          Items.Strings = (
+            'Xlib'
+          )
+          ItemHeight = 23
+          TabOrder = 0
+          Data = {
+            0100000001
+          }
+        end
+        object Label1: TLabel
+          Left = 32
+          Height = 17
+          Top = 0
+          Width = 109
+          Caption = 'Capture mettod'
+          ParentColor = False
+        end
+      end
+      object Panel2: TPanel
+        Left = 184
+        Height = 240
+        Top = 32
+        Width = 290
+        ClientHeight = 240
+        ClientWidth = 290
+        TabOrder = 1
+        object Image1: TImage
+          Left = 1
+          Height = 238
+          Top = 1
+          Width = 288
+          Align = alClient
+          Proportional = True
+        end
+      end
+      object Panel3: TPanel
+        Left = 8
+        Height = 184
+        Top = 120
+        Width = 168
+        BevelColor = clBlack
+        BorderStyle = bsSingle
+        Caption = ' '
+        ClientHeight = 182
+        ClientWidth = 166
+        TabOrder = 2
+        object ListBox1: TListBox
+          Left = 8
+          Height = 152
+          Top = 24
+          Width = 152
+          ItemHeight = 0
+          OnClick = ListBox1Click
+          OnDblClick = ListBox1DblClick
+          OnSelectionChange = ListBox1SelectionChange
+          ScrollWidth = 150
+          TabOrder = 0
+          TopIndex = -1
+        end
+        object Label5: TLabel
+          Left = 32
+          Height = 17
+          Top = 0
+          Width = 85
+          Caption = 'RS instances'
+          ParentColor = False
+        end
+      end
+      object Label6: TLabel
+        Left = 296
+        Height = 17
+        Top = 8
+        Width = 55
+        Caption = 'Preview'
+        ParentColor = False
+      end
+      object Label11: TLabel
+        Left = 184
+        Height = 17
+        Top = 280
+        Width = 256
+        Caption = 'Dbl click to set the default RS window'
+        ParentColor = False
+      end
+    end
+    object TabSheet4: TTabSheet
+      Caption = 'Running Apps'
+      ClientHeight = 311
+      ClientWidth = 481
+      object ListBox2: TListBox
+        Left = 16
+        Height = 264
+        Top = 32
+        Width = 136
+        ItemHeight = 0
+        OnSelectionChange = ListBox2SelectionChange
+        ScrollWidth = 134
+        TabOrder = 0
+        TopIndex = -1
+      end
+      object ListBox3: TListBox
+        Left = 152
+        Height = 208
+        Top = 32
+        Width = 115
+        ItemHeight = 0
+        OnClick = ListBox3Click
+        OnDblClick = ListBox3DblClick
+        OnSelectionChange = ListBox3SelectionChange
+        ScrollWidth = 113
+        TabOrder = 1
+        TopIndex = -1
+      end
+      object Label3: TLabel
+        Left = 32
+        Height = 17
+        Top = 8
+        Width = 94
+        Caption = 'Running apps'
+        ParentColor = False
+      end
+      object Label4: TLabel
+        Left = 168
+        Height = 17
+        Top = 8
+        Width = 85
+        Caption = 'RS instances'
+        ParentColor = False
+      end
+      object Image2: TImage
+        Left = 272
+        Height = 208
+        Top = 32
+        Width = 200
+        Proportional = True
+      end
+      object Label7: TLabel
+        Left = 352
+        Height = 17
+        Top = 8
+        Width = 55
+        Caption = 'Preview'
+        ParentColor = False
+      end
+      object Label12: TLabel
+        Left = 160
+        Height = 51
+        Top = 245
+        Width = 277
+        Caption = 'Single click to preview the RS window'#10'Dbl click to change the RS windos for the'#10'selected app'
+        ParentColor = False
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'Installed Apps'
+      TabVisible = False
+    end
+    object TabSheet3: TTabSheet
+      Caption = 'About'
+      ClientHeight = 311
+      ClientWidth = 481
+      object Label2: TLabel
+        Left = 88
+        Height = 40
+        Top = 8
+        Width = 296
+        Caption = 'Alt1 Toolkit Linux'
+        Font.Height = -35
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+      end
+      object Label8: TLabel
+        Left = 144
+        Height = 17
+        Top = 56
+        Width = 164
+        Caption = 'Developed by: Nandofw'
+        ParentColor = False
+      end
+      object Label9: TLabel
+        Left = 136
+        Height = 17
+        Top = 80
+        Width = 177
+        Caption = 'Source Code avaliable on :'
+        ParentColor = False
+        OnClick = Label9Click
+      end
+      object Label10: TLabel
+        Left = 96
+        Height = 17
+        Top = 104
+        Width = 273
+        Caption = 'github.com/nandofw/Linux-Alt1-Toolkit'
+        ParentColor = False
+      end
+    end
+  end
+  object Timer1: TTimer
+    Interval = 10000
+    OnTimer = Timer1Timer
+    left = 440
+    top = 48
+  end
+  object capturetimer: TTimer
+    Interval = 250
+    OnTimer = capturetimerTimer
+    left = 368
+    top = 56
+  end
+end
